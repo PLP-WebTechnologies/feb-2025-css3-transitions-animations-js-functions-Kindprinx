@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CSS Animations + localStorage</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 50px;
+      transition: background-color 0.4s, color 0.4s;
+    }
+
+    .light-mode {
+      background-color: #f0f8ff;
+      color: #000;
+    }
+
+    .dark-mode {
+      background-color: #121212;
+      color: #fff;
+    }
+
+    .animated-btn {
+      padding: 15px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.4s ease;
+    }
+
+    /* Bounce animation */
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-15px);
+      }
+    }
+
+    .bouncing {
+      animation: bounce 0.5s;
+    }
+
+    /* Fade-in animation */
+    .fade-in {
+      opacity: 0;
+      animation: fadeIn 2s forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    .toggle-container {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2 class="fade-in">Welcome to my animation</h2>
+
+  <label for="colorSelect">Choose  Button Color:</label>
+  <select id="colorSelect">
+    <option value="#007bff">Blue</option>
+    <option value="#28a745">Green</option>
+    <option value="#dc3545">Red</option>
+    <option value="#ffc107">Yellow</option>
+  </select>
+
+  <br><br>
+  <button id="animateBtn" class="animated-btn">Click Me!</button>
+
+  <div class="toggle-container">
+    <label>
+      <input type="checkbox" id="modeToggle"> Dark Mode
+    </label>
+  </div>
+
+  <script>
+    const btn = document.getElementById('animateBtn');
+    const select = document.getElementById('colorSelect');
+    const modeToggle = document.getElementById('modeToggle');
+    const body = document.body;
+
+    // Load preferences on page load
+    function loadPreferences() {
+      const savedColor = localStorage.getItem('btnColor');
+      const savedMode = localStorage.getItem('mode');
+
+      if (savedColor) {
+        btn.style.backgroundColor = savedColor;
+        select.value = savedColor;
+      }
+
+      if (savedMode === 'dark') {
+        body.classList.remove('light-mode');
+        body.classList.add('dark-mode');
+        modeToggle.checked = true;
+      } else {
+        body.classList.remove('dark-mode');
+        body.classList.add('light-mode');
+        modeToggle.checked = false;
+      }
+    }
+
+    // Save selected color
+    select.addEventListener('change', () => {
+      const newColor = select.value;
+      localStorage.setItem('btnColor', newColor);
+      btn.style.backgroundColor = newColor;
+    });
+
+    // Toggle dark/light mode
+    modeToggle.addEventListener('change', () => {
+      if (modeToggle.checked) {
+        body.classList.remove('light-mode');
+        body.classList.add('dark-mode');
+        localStorage.setItem('mode', 'dark');
+      } else {
+        body.classList.remove('dark-mode');
+        body.classList.add('light-mode');
+        localStorage.setItem('mode', 'light');
+      }
+    });
+
+    // Button animation on click
+    btn.addEventListener('click', () => {
+      btn.classList.add('bouncing');
+      setTimeout(() => btn.classList.remove('bouncing'), 500);
+    });
+
+    // Init
+    loadPreferences();
+  </script>
+
+</body>
+</html>
